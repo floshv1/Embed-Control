@@ -1,3 +1,4 @@
+from datetime import time
 import logging
 import requests
 
@@ -31,4 +32,5 @@ class ServerPinger:
                 logging.error(
                     f"[ServerPinger] Error pinging server on attempt {attempt + 1}: {e}"
                 )
+                time.sleep(1)
         return False
