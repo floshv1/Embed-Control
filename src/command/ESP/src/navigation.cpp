@@ -48,8 +48,8 @@ void Navigation::Compute_Speed(){
     float rightSpeed = yJoystick + xJoystick;
 
     // Normalize the speeds to be within the range of -255 to 255
-    leftSpeed = constrain(leftSpeed, -255, 255);
-    rightSpeed = constrain(rightSpeed, -255, 255);
+    leftSpeed = constrain(leftSpeed, 0, 255);
+    rightSpeed = constrain(rightSpeed, 0, 255);
 
     // Set the speeds to the motors
     Left_Motor->setSpeed(leftSpeed);

@@ -18,12 +18,13 @@ Motor::Motor (int relay1,int relay2, int driver) {
     }
   }
   void Motor::setEsc(Servo esc) {
-    this->esc = esc;
+    this-> esc = esc;
+    this-> esc.attach(driver);
   }
 
   void Motor::setSpeed(float speed){
-    int escSpeed = map(sqrt(speed*speed), -255, 255, 1000, 2000);
-    esc.writeMicroseconds(escSpeed);
+    int escSpeed = map(speed, 0, 255, 1000, 2000);
+    esc.writeMicroseconds(2000);
     Serial.print("esc : ");
     Serial.println(esc.read());
   }
