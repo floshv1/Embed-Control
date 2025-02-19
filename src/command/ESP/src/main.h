@@ -7,13 +7,11 @@
 
 // Pins for the relay
 #define Rightrelay1 5
-#define Rightrelay2 2
 #define Leftrelay1 18
-#define Leftrelay2 4
 
 // Pins for the driver 
-#define Rightdriver 4
-#define Leftdriver 15
+const int  Rightdriver = 4;
+const int  Leftdriver  = 15;
 
 
 // ESP settings : 

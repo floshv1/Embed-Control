@@ -28,6 +28,7 @@ char temp[32];
 float x;
 float y;
 
+int pwm;
 // Timer intteruption
 int timer_no_info =0;
 int delta; 
@@ -35,8 +36,8 @@ const int Timer_stop = 20000;
 // attach the esc 
 
 // creation of the 2 Motor 
-Motor* RightMotor = new Motor(Rightrelay1, Rightrelay2, esc_right, Rightdriver);
-Motor* LeftMotor = new Motor(Leftrelay1, Leftrelay2, esc_left, Leftdriver);
+Motor* RightMotor = new Motor(Rightrelay1, 0, Rightdriver);
+Motor* LeftMotor = new Motor(Leftrelay1, 0, Leftdriver);
 
 // creation of the navigation object 
 Navigation Navi = Navigation(LeftMotor, RightMotor);
@@ -78,32 +79,36 @@ void setup(){
 
   	pinMode(Rightrelay1,OUTPUT);
   	pinMode(Leftrelay1,OUTPUT);
-    pinMode(Rightrelay2,OUTPUT);
-  	pinMode(Leftrelay2,OUTPUT);
   
   	// write to go in front 
   	digitalWrite(Rightrelay1,LOW);
   	digitalWrite(Leftrelay1,LOW);
-    digitalWrite(Rightrelay2,LOW);
-  	digitalWrite(Leftrelay2,LOW);
+
     delay(1000);
     digitalWrite(Rightrelay1,HIGH);
   	digitalWrite(Leftrelay1,HIGH);
     delay(1000);
     digitalWrite(Rightrelay1,LOW);
   	digitalWrite(Leftrelay1,LOW);
-    
+    delay(2000);
+    pinMode(Rightdriver,OUTPUT);
+    digitalWrite(Rightdriver,HIGH);
+    delay(2000);
+    digitalWrite(Rightdriver,LOW);
+
     // Attach the ESCs
     esc_left.attach(Leftdriver);
     esc_right.attach(Rightdriver);
     
     // Set the ESCs in the navigation object
-    Navi.setLeftEsc(esc_left);
-    Navi.setRightEsc(esc_right);
+    if(!esc_left.attached())
+      Navi.setLeftEsc(esc_left);
+    if(!esc_right.attached())
+      Navi.setRightEsc(esc_right);
 
     // Initialize the ESCs with minimum throttle
-    esc_left.writeMicroseconds(1000);
-    esc_right.writeMicroseconds(1000);
+    esc_left.write(180);
+    esc_right.write(0);
     delay(2000); // Wait for 2 seconds to allow the ESCs to initialize
 
     //TODO : write the correct pin for the ESC + setup I2C connection 

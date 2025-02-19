@@ -2,11 +2,10 @@
 
 
   // Constructor : 
-Motor::Motor (int relay,int relay2, Servo esc, int driver) {
-    this->relay1 = relay;
+Motor::Motor (int relay1,int relay2, int driver) {
+    this->relay1 = relay1;
     this -> relay2 = relay2;
     this -> driver = driver;
-    this-> esc = esc;
   }
   // Update the direction of the servo motors :
   void Motor::updateDirection (float y){
@@ -23,7 +22,9 @@ Motor::Motor (int relay,int relay2, Servo esc, int driver) {
   }
 
   void Motor::setSpeed(float speed){
-    int escSpeed = map(speed, -255, 255, 1000, 2000);
-    esc.writeMicroseconds(speed*0.8);
+    int escSpeed = map(sqrt(speed*speed), -255, 255, 1000, 2000);
+    esc.writeMicroseconds(escSpeed);
+    Serial.print("esc : ");
+    Serial.println(esc.read());
   }
   

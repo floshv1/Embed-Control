@@ -7,7 +7,6 @@ class Motor {
     private: 
     // the ESC objects
     Servo esc;
-
     // the relay & driver pins 
     int relay1;
     int relay2;
@@ -17,7 +16,7 @@ class Motor {
     public : 
     Motor();
     // constructor 
-    Motor(int relay1, int relay2, Servo esc, int driver);
+    Motor(int relay1, int relay2, int driver);
 
     // Update the direction of the servo motors : 
     void updateDirection(float y);
