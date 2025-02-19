@@ -1,16 +1,24 @@
 #include "navigation.h"
 
 // constructor 
-Navigation::Navigation (Motor* Left_Motor, Motor* Right_Motorn, char *temp){
+Navigation::Navigation (Motor* Left_Motor, Motor* Right_Motor){
     this -> Left_Motor = Left_Motor;
     this -> Right_Motor = Right_Motor;
     this -> xCoordinate = 0; 
     this -> yCoordinate = 0;
     this -> xJoystick = 0; 
     this -> yJoystick = 0;
-    this -> message  = temp;
+    this -> message  = 0;
     this -> Rightspeed = 0;
     this -> Leftspeed = 0;
+}
+// Setters for esc
+void Navigation::setLeftEsc(Servo esc) {
+    Left_Motor->setEsc(esc);
+}
+
+void Navigation::setRightEsc(Servo esc) {
+    Right_Motor->setEsc(esc);
 }
 
 void Navigation::Joystick_sign (float x, float y){
@@ -44,8 +52,8 @@ void Navigation::Compute_Speed(){
     rightSpeed = constrain(rightSpeed, -255, 255);
 
     // Set the speeds to the motors
-    Left_Motor->setSpeed(leftSpeed*0.8);
-    Right_Motor->setSpeed(rightSpeed*0.8);
+    Left_Motor->setSpeed(leftSpeed);
+    Right_Motor->setSpeed(rightSpeed);
 
     Serial.print("Left Speed: ");
     Serial.println(leftSpeed);
@@ -61,6 +69,19 @@ void Navigation::Joystick_command_direction(){
 
     //now we send the unsign value to control the speed;
 }
+
+
+void Navigation::Set_Joystick_Command(float x, float y){
+    Serial.println("Joystick sign");
+    Joystick_sign(x,y);
+    Serial.println("update direction ");
+    Joystick_command_direction();
+    Joystick_unsign(x,y);
+    Serial.println("Compute speed");
+    Compute_Speed();
+}
+
+
 
 
 // TODO : Make the convert coordinates to indicates the direction of the robot

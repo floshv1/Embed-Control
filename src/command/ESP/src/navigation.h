@@ -1,6 +1,6 @@
 #include "motor.h"
-#ifndef navigation.h
-#define navigation.h
+#ifndef navigation
+#define navigation
 
 class Navigation{
 
@@ -27,7 +27,7 @@ private:
 
 public:
     // constructor
-    Navigation(Motor* Left_Motor, Motor* Right_Motor, char *temp);
+    Navigation(Motor *Left_Motor, Motor *Right_Motor);
     // convert the joystick values to sign float 
     void Joystick_sign(float x, float y);
     // convert the joystick values to sign float   
@@ -37,11 +37,17 @@ public:
 
     void Compute_Speed();
 
+    void Set_Joystick_Command(float  x, float y);
+
+    // Setters for esc
+    void setLeftEsc(Servo esc);
+    void setRightEsc(Servo esc);
+    
+
     // TODO : Make the convert GPS coordinates to indicates the direction of the rover
 
     // TODO : Make the convert GPS coordinates to indicates the direction of the rover
 };
-
 
 
 
