@@ -18,6 +18,7 @@ class KeyboardInputHandler(InputHandler):
             keyboard.Key.down: lambda: self.send_position(Position(0, -1)),
             keyboard.Key.right: lambda: self.send_position(Position(-1, 0)),
             keyboard.Key.left: lambda: self.send_position(Position(1, 0)),
+            keyboard.Key.space: lambda: self.send_position(Position(0, 0)),
             keyboard.Key.esc: self.listener.stop,
         }
 
