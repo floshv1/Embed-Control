@@ -1,3 +1,4 @@
 requests
-websocket
 pyPS4Controller
+websocket-client
+pynput
