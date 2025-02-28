@@ -28,9 +28,9 @@ class ServerPinger:
                 status = data.get("Connection Status") == "Active"
                 logging.info(f"[ServerPinger] Server status: {status}")
                 return status
-            except Exception as e:
+            except Exception:
                 logging.error(
-                    f"[ServerPinger] Error pinging server on attempt {attempt + 1}: {e}"
+                    f"[ServerPinger] Error pinging server on attempt {attempt + 1}."
                 )
                 time.sleep(1)
         return False
