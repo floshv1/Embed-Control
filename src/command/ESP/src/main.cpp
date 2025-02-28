@@ -6,11 +6,11 @@ Servo* esc_right = new Servo();
 Servo* esc_left = new Servo();
 
 // creation of the 2 Motor 
-Motor* RightMotor  = new Motor(Rightrelay1, esc_right, Rightdriver);
-Motor* LeftMotor = new Motor(Leftrelay1, esc_left, Leftdriver);
+Motor* Right_Motor  = new Motor(RIGHT_RELAY, esc_right, Rightdriver);
+Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, Leftdriver);
 
 // creation of the navigation object 
-Navigation Navi = Navigation(LeftMotor, RightMotor);
+Navigation Navi = Navigation(Left_Motor, Right_Motor);
 
 
 //Function for reading the received data
@@ -35,13 +35,13 @@ void onReceive(int len){
     Serial.println("Error listening");
   }
 // TODO : Make different case for different input values 
-  receiveFlag = true;
+  receive_Flag = true;
 }
 
 void setup(){
   Wire.onReceive(onReceive);
   Wire.begin((uint8_t)I2C_DEV_ADDR);
-  Serial.begin(Baud_rate);
+  Serial.begin(BAUD_RATE);
   
   // Initialize SErvo object 
   Serial.println("Initializing Motors...");
@@ -54,24 +54,24 @@ void setup(){
 
   Serial.println("Creating Motor objects...");
   
-  pinMode(Rightrelay1, OUTPUT);
-  pinMode(Leftrelay1, OUTPUT);
+  pinMode(RIGHT_RELAY, OUTPUT);
+  pinMode(LEFT_RELAY, OUTPUT);
 
   // Initialize relays
-  digitalWrite(Rightrelay1, LOW);
-  digitalWrite(Leftrelay1, LOW);
+  digitalWrite(RIGHT_RELAY, LOW);
+  digitalWrite(LEFT_RELAY, LOW);
 
   // Check if Motor objects are initialized
-  if (RightMotor == nullptr || LeftMotor == nullptr) {
+  if (Right_Motor == nullptr || Left_Motor == nullptr) {
     Serial.println("Error: Failed to initialize Motor objects");
     while (true); // Halt execution
   }
   delay(1000);
-  digitalWrite(Rightrelay1, HIGH);
-  digitalWrite(Leftrelay1, HIGH);
+  digitalWrite(RIGHT_RELAY, HIGH);
+  digitalWrite(LEFT_RELAY, HIGH);
   delay(1000);
-  digitalWrite(Rightrelay1, LOW);
-  digitalWrite(Leftrelay1, LOW);  
+  digitalWrite(RIGHT_RELAY, LOW);
+  digitalWrite(LEFT_RELAY, LOW);  
 
 }
 
@@ -85,15 +85,17 @@ void loop(){
     timer_no_info=0;
   }
   */
-  if(receiveFlag){
+  if(receive_Flag){
     Serial.println("Received data");
     //TODO : write the correct pin for the ESC + setup I2C connection 
     Serial.println(temp);
     Navi.SetJoystickCommand(x,y);
-    receiveFlag = false;
+    receive_Flag = false;
+    delay(300);
   }
   else{
     Serial.println("No data received");
-    delay(1000);
+    Navi.SetJoystickCommand(0,0);
+    delay(300);
   }
 }

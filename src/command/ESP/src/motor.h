@@ -11,7 +11,7 @@ class Motor {
     int relay1;
     int driver;
 
-
+    int actual_speed;
     public : 
     // constructor 
     Motor(int relay1, Servo* esc, int driver);
