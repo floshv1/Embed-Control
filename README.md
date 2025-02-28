@@ -107,6 +107,14 @@ Or for a production environment:
 fastapi run /app/main.py --port 8000
 ```
 
+> [!NOTE]
+>
+> ```bash
+> alias run="fastapi run /home/admin/Embed-Control/src/command/Rpi/app/main.py --port 8765"
+> alias load="source /home/admin/Embed-Control/src/command/Rpi/venv/bin/activate"
+> alias start="load && run"
+> ```
+
 ### ESP
 
 > [!NOTE]
