@@ -1,6 +1,6 @@
 #include "motor.h"
-#ifndef navigation
-#define navigation
+#ifndef NAVIGATION_H
+#define NAVIGATION_H
 
 class Navigation{
 
@@ -9,39 +9,34 @@ private:
     Motor* Left_Motor;
     Motor* Right_Motor;
     
-    float xCoordinate;
-    float yCoordinate;
+    float x_coordinate;
+    float y_coordinate;
 
-    float xJoystick;
-    float yJoystick;   
+    float x_joystick;
+    float y_joystick;   
 
-    int Rightspeed; 
-    int Leftspeed;
+    int right_speed; 
+    int left_speed;
     
     char* message;
-
-    bool is_arrived();
-        // TODO : check if the rover is arrived to is destination with coordinates 
-        // -> update the coordinatesCommand flag
-        // TODO : check if the rover is arrived to is destination with coordinates 
 
 public:
     // constructor
     Navigation(Motor *Left_Motor, Motor *Right_Motor);
     // convert the joystick values to sign float 
-    void Joystick_sign(float x, float y);
+    void JoystickSign(float x, float y);
     // convert the joystick values to sign float   
-    void Joystick_unsign(float x, float y);
+    void JoystickUnsign(float x, float y);
 
-    void Joystick_command_direction();
+    void JoystickCommandDirection();
 
-    void Compute_Speed();
+    void ComputeSpeed();
 
-    void Set_Joystick_Command(float  x, float y);
+    void SetJoystickCommand(float  x, float y);
 
-    // Setters for esc
-    void setLeftEsc(Servo esc);
-    void setRightEsc(Servo esc);
+    // Setters for motors
+    void setLeftMotor(Motor* motor);
+    void setRightMotor(Motor* motor);
     
 
     // TODO : Make the convert GPS coordinates to indicates the direction of the rover

@@ -1,43 +1,13 @@
-/*
-  TRAVELERS version DELTA 
-  
-  Basé sur le code de controle COSTE@2024 et réception I2C TOURON@2022
-
-  Ce programme contrôle un microcontrôleur ESP32 qui interfère avec deux ESCs 
-  (Electronic Speed Controllers) et des moteurs via la communication I2C.
-*/
-#include "navigation.h"
 #include "main.h"
 
 
-// I2C address of the esp
-
-
 // Servo object to control the ESC
-Servo esc_right;
-Servo esc_left;
-
-// I2C received flag 
-volatile boolean receiveFlag = false; // Drapeau pour la réception de données I2C
-
-
-// I2C received data
-char temp[32]; 
-
-// joystick position : 
-float x;
-float y;
-
-int pwm;
-// Timer intteruption
-int timer_no_info =0;
-int delta; 
-const int Timer_stop = 20000;
-// attach the esc 
+Servo* esc_right = new Servo();
+Servo* esc_left = new Servo();
 
 // creation of the 2 Motor 
-Motor* RightMotor = new Motor(Rightrelay1, 0, Rightdriver);
-Motor* LeftMotor = new Motor(Leftrelay1, 0, Leftdriver);
+Motor* RightMotor  = new Motor(Rightrelay1, esc_right, Rightdriver);
+Motor* LeftMotor = new Motor(Leftrelay1, esc_left, Leftdriver);
 
 // creation of the navigation object 
 Navigation Navi = Navigation(LeftMotor, RightMotor);
@@ -60,55 +30,49 @@ void onReceive(int len){
       *separator = '\0'; // Replace the comma with a null terminator
       x = atof(temp);
       y = atof(separator+1);
-      Serial.println(x);
-      Serial.println(y);
   }
   else{
-    Serial.println("PROBLEM DE MERDE ");
+    Serial.println("Error listening");
   }
 // TODO : Make different case for different input values 
   receiveFlag = true;
 }
 
 void setup(){
+  Wire.onReceive(onReceive);
+  Wire.begin((uint8_t)I2C_DEV_ADDR);
+  Serial.begin(Baud_rate);
   
-    Wire.onReceive(onReceive);
-    Wire.begin((uint8_t)I2C_DEV_ADDR);
-    Serial.begin(Baud_rate);
+  // Initialize SErvo object 
+  Serial.println("Initializing Motors...");
+
+  // Check if Servo objects are initialized
+  if (esc_right == nullptr || esc_left == nullptr) {
+    Serial.println("Error: Failed to initialize Servo objects");
+    while (true); // Halt execution
+}
+
+  Serial.println("Creating Motor objects...");
   
+  pinMode(Rightrelay1, OUTPUT);
+  pinMode(Leftrelay1, OUTPUT);
 
-  	pinMode(Rightrelay1,OUTPUT);
-  	pinMode(Leftrelay1,OUTPUT);
-  
-  	// write to go in front 
-  	digitalWrite(Rightrelay1,LOW);
-  	digitalWrite(Leftrelay1,LOW);
+  // Initialize relays
+  digitalWrite(Rightrelay1, LOW);
+  digitalWrite(Leftrelay1, LOW);
 
-    delay(1000);
-    digitalWrite(Rightrelay1,HIGH);
-  	digitalWrite(Leftrelay1,HIGH);
-    delay(1000);
-    digitalWrite(Rightrelay1,LOW);
-  	digitalWrite(Leftrelay1,LOW);
-    
-    // Attach the ESCs
-    esc_left.attach(Leftdriver);
-    esc_right.attach(Rightdriver);
+  // Check if Motor objects are initialized
+  if (RightMotor == nullptr || LeftMotor == nullptr) {
+    Serial.println("Error: Failed to initialize Motor objects");
+    while (true); // Halt execution
+  }
+  delay(1000);
+  digitalWrite(Rightrelay1, HIGH);
+  digitalWrite(Leftrelay1, HIGH);
+  delay(1000);
+  digitalWrite(Rightrelay1, LOW);
+  digitalWrite(Leftrelay1, LOW);  
 
-    // Set the ESCs in the navigation object
-    Navi.setLeftEsc(esc_left);
-    Navi.setRightEsc(esc_right);
-
-    Serial.println("ESC attached");
-
-    // Initialize the ESCs with minimum throttle
-    esc_left.writeMicroseconds(1000);
-    esc_right.writeMicroseconds(1000);
-    delay(2000); // Wait for 2 seconds to allow the ESCs to initialize
-
-    //TODO : write the correct pin for the ESC + setup I2C connection 
-
-    //TODO : write the correct pin for the ESC + setup I2C connection 
 }
 
 void loop(){
@@ -125,13 +89,11 @@ void loop(){
     Serial.println("Received data");
     //TODO : write the correct pin for the ESC + setup I2C connection 
     Serial.println(temp);
-    Navi.Set_Joystick_Command(x,y);
+    Navi.SetJoystickCommand(x,y);
     receiveFlag = false;
   }
   else{
-    Serial.println("No receive");
+    Serial.println("No data received");
     delay(1000);
   }
-
-    
 }
