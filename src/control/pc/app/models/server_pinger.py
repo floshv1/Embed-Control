@@ -1,4 +1,4 @@
-from datetime import time
+import time
 import logging
 import requests
 
@@ -26,7 +26,7 @@ class ServerPinger:
                 response = requests.get(self.server_address)
                 data = response.json()
                 status = data.get("Connection Status") == "Active"
-                logging.info(f"[ServerPinger] Server status: {status}")
+                logging.info(f"[ServerPinger] Server status: {'Active' if status else 'Inactive'}")
                 return status
             except Exception:
                 logging.error(
