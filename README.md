@@ -122,8 +122,47 @@ fastapi run /app/main.py --port 8000
 
 ### Client
 
-> [!NOTE]
-> WIP
+Frist clone the repository:
+
+```bash
+git clone https://github.com/THE-TRAVELERS/Embed-Control.git
+```
+
+Move to the directory:
+
+```bash
+cd Embed-Control/src/control/pc
+```
+
+Setup the virtual environment:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+# Alternatively, you can use this command for Windows: . venv/bin/activate
+```
+
+Install the requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Testing the Controller
+
+To test the controller, do not run the entire project, just the controller part:
+
+```bash
+python app/test_controller.py
+```
+
+#### Running the Client
+
+To run the client, do not run the entire project, just the client part:
+
+```bash
+python app
+```
 
 ## License
 

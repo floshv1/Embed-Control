@@ -1,4 +1,4 @@
-requests
-pyPS4Controller
-websocket-client
-pynput
+requests==2.32.3
+websocket-client==1.8.0
+pynput==1.7.7
+pygame==2.6.1
