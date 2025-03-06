@@ -9,7 +9,7 @@ class KeyboardInputHandler(InputHandler):
     Handles input from the keyboard and sends positions to the server.
     """
 
-    def __init__(self, websocket_url: str):
+    def __init__(self, websocket_url: str) -> None:
         super().__init__(websocket_url)
         logging.info("[KeyboardInputHandler] Initialized.")
         self.listener = keyboard.Listener(on_press=self.on_press)
@@ -29,6 +29,7 @@ class KeyboardInputHandler(InputHandler):
         action = self.key_actions.get(key)
         if action:
             action()
+            logging.debug(f"Key pressed: {key}")
 
     def handle_input(self) -> None:
         """
