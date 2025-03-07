@@ -8,4 +8,5 @@ class Position:
         self.y = max(min(y, 1.0), -1.0)
 
     def __str__(self):
-        return f"{self.x:.2f},{self.y:.2f}"
+        # return f"{self.x},{self.y}"
+        return f"({self.x:.2f},{self.y:.2f})"
