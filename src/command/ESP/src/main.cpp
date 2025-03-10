@@ -20,16 +20,35 @@ void onReceive(int len){
     temp[j] = Wire.read();
     temp[j + 1] = '\0';
   }
+  bool isnegative = (temp[0] == '-');
   for (int j = 0; j < len; j++) {
     temp[j] = temp[j + 1];
   }
-  Serial.println("End message");
+  Serial.print("Raw received [");
+  for(int i = 0; i < len; i++) {
+      Serial.print((char)temp[i]);
+      Serial.print(" (");
+      Serial.print((int)temp[i]);
+      Serial.print(") ");
+  }
+  Serial.println("]");
+
+  char* start = strchr(temp, '(');
+  if(!start){
+    Serial.println("Error: No opening parenthesis found in string: ");
+    return;
+  }
+  char* end = strchr(temp,')');
+  *end = '\0';
   memmove(temp, temp + 1, strlen(temp));
   char* separator = strchr(temp,',');
   if(separator!=0){
       *separator = '\0'; // Replace the comma with a null terminator
-      x = atof(temp);
-      y = atof(separator+1);
+      // TODO : put the minus bool in operation 
+      y_left = atof(temp);
+      y_right = atof(separator+1);
+      Serial.print("right : ");
+      Serial.println(y_right);
   }
   else{
     Serial.println("Error listening");
@@ -37,6 +56,78 @@ void onReceive(int len){
 // TODO : Make different case for different input values 
   receive_Flag = true;
 }
+
+
+void onReceive2(int len) {
+  // Clear temp buffer first
+  memset(temp, 0, sizeof(temp));
+  
+  // Read data into temp
+  for (int j = 0; j < len; j++) {
+      temp[j] = Wire.read();
+  }
+  temp[len] = '\0';
+  Serial.print("Raw received [");
+  for(int i = 0; i < len; i++) {
+      Serial.print((char)temp[i]);
+      Serial.print(" (");
+      Serial.print((int)temp[i]);
+      Serial.print(") ");
+  }
+  Serial.println("]");
+
+  // Trim any whitespace
+  char* str = temp;
+  while(isspace(*str)) str++;
+  
+  // Check for opening parenthesis
+  char* start = strchr(str, '(');
+  if (!start) {
+      Serial.println("Error: No opening parenthesis found in string: ");
+      Serial.println(str);
+      return;
+  }
+  
+  // Check for closing parenthesis
+  char* end = strchr(start, ')');
+  if (!end) {
+      Serial.println("Error: No closing parenthesis found in string: ");
+      Serial.println(str);
+      return;
+  }
+  
+  // Extract the content between parentheses
+  start++; // Skip the opening parenthesis
+  *end = '\0'; // Terminate at closing parenthesis
+  
+  // Find the comma
+  char* separator = strchr(start, ',');
+  if (!separator) {
+      Serial.println("Error: No comma found in values: ");
+      Serial.println(start);
+      return;
+  }
+  
+  // Split the values
+  *separator = '\0';
+  separator++;
+  
+  // Trim any whitespace
+  while(isspace(*start)) start++;
+  while(isspace(*separator)) separator++;
+  
+  // Convert strings to floats
+  y_left = atof(start);
+  y_right = atof(separator);
+  
+  Serial.print("Parsed values - Left: ");
+  Serial.print(y_left);
+  Serial.print(" Right: ");
+  Serial.println(y_right);
+  
+  receive_Flag = true;
+}
+
 
 void setup(){
   Wire.onReceive(onReceive);
@@ -66,6 +157,14 @@ void setup(){
     Serial.println("Error: Failed to initialize Motor objects");
     while (true); // Halt execution
   }
+  digitalWrite(RIGHT_RELAY, HIGH);
+  delay(1000);
+  digitalWrite(RIGHT_RELAY, LOW);
+  delay(1000);
+  digitalWrite(LEFT_RELAY, HIGH);
+  delay(1000);
+  digitalWrite(LEFT_RELAY, LOW);
+
   delay(1000);
   digitalWrite(RIGHT_RELAY, HIGH);
   digitalWrite(LEFT_RELAY, HIGH);
@@ -88,14 +187,15 @@ void loop(){
   if(receive_Flag){
     Serial.println("Received data");
     //TODO : write the correct pin for the ESC + setup I2C connection 
-    Serial.println(temp);
-    Navi.SetJoystickCommand(x,y);
+    //Serial.println(temp);
+    
+    Navi.SetJoystickCommand(y_left,y_right);
     receive_Flag = false;
-    delay(300);
+    delay(200);
   }
   else{
     Serial.println("No data received");
-    Navi.SetJoystickCommand(0,0);
+    Navi.UpdateWithoutInput();
     delay(300);
   }
 }

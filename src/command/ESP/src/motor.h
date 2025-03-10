@@ -12,6 +12,9 @@ class Motor {
     int driver;
 
     int actual_speed;
+
+    byte actual_direction;
+    
     public : 
     // constructor 
     Motor(int relay1, Servo* esc, int driver);
@@ -21,6 +24,10 @@ class Motor {
 
     // Make the motor go to a certain speed
     void setSpeed(byte speed);
+
+    int getSpeed();
+
+    int getRelay();
 
     //TODO  : make the feedback about the speed of the motor 
     

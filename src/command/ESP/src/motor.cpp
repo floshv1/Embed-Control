@@ -7,6 +7,7 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
     this->esc = esc;
     this -> driver = driver;
     this -> actual_speed = 1000;
+    this -> actual_direction = 0;
     esc->attach(driver);
     esc->writeMicroseconds(1000);
     delay(1000);
@@ -14,30 +15,35 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
   }
   // Update the direction of the servo motors 
   void Motor::updateDirection (float direction){
-    if(direction<0){
+    if(direction>=0){
       digitalWrite(relay1,LOW);
     }
     else{
       digitalWrite(relay1,HIGH);
     }
   }
+  
+  int Motor::getRelay() {
+    return relay1;
+  }
+
 
     // Make the motor go to a certain speed
   void Motor::setSpeed(byte speed){
-    int esc_speed = map(speed, 0, 255, 1000, 2000);
+    int esc_speed = map(speed, 0, 255, 1000, 2000);  
     esc->writeMicroseconds(esc_speed);
-    /*
-    if(esc_speed*0.8 > actual_speed*0.8){
+    if(esc_speed > actual_speed){
       for(int i=actual_speed; i<esc_speed;i++){
         esc->writeMicroseconds(i);
-        delay(1);
+        delay(0.2);
       }
     }
     else{
-      for(int i=actual_speed*0.8; i>esc_speed*0.8;i--){
+      for(int i=actual_speed; i>esc_speed;i--){
         esc->writeMicroseconds(i);
-        delay(1);
+        delay(0.2);
       }
-    }*/    
+    }
+    actual_speed=esc_speed;
   }
   

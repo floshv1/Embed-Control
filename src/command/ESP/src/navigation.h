@@ -12,33 +12,49 @@ private:
     float x_coordinate;
     float y_coordinate;
 
-    float x_joystick;
-    float y_joystick;   
+    float y_left_joystick;
+    float y_right_joystick;   
 
     int right_speed; 
     int left_speed;
     
     char* message;
 
+    float leftCurrentSpeed;
+    float rightCurrentSpeed;
+    unsigned long lastUpdateTime;
+
+    // ...existing code...
+    const float DECAY_RATE = 0.95;  // Rate at which speed decays when no input (95% of current speed)
+    unsigned long lastCommandTime;   // Track when we last received a command
+    const unsigned long TIMEOUT_MS = 500;  // Time after which we consider connection lost
+
+    
 public:
     // constructor
     Navigation(Motor *Left_Motor, Motor *Right_Motor);
+
+    float getLeftJoystick(void);
+    float getRightJoystick(void);
+
     // convert the joystick values to sign float 
-    void JoystickSign(float x, float y);
+    void JoystickSign(float left, float right);
     // convert the joystick values to sign float   
-    void JoystickUnsign(float x, float y);
+    void JoystickUnsign(float left, float right);
 
     void JoystickCommandDirection();
 
     void ComputeSpeed();
 
-    void SetJoystickCommand(float  x, float y);
+    void SetJoystickCommand(float  left, float right);
 
     // Setters for motors
     void setLeftMotor(Motor* motor);
     void setRightMotor(Motor* motor);
     
+    float smoothSpeed(float currentSpeed, float targetSpeed,float alpha, float dt=0.1);
 
+    void UpdateWithoutInput();
     // TODO : Make the convert GPS coordinates to indicates the direction of the rover
 
     // TODO : Make the convert GPS coordinates to indicates the direction of the rover

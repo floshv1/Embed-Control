@@ -8,8 +8,8 @@
 #define I2C_DEV_ADDR 0x52
 
 // Pins for the relay
-#define RIGHT_RELAY 5
-#define LEFT_RELAY 18
+#define RIGHT_RELAY 18
+#define LEFT_RELAY 5
 
 // Pins for the driver 
 
@@ -18,7 +18,7 @@ const int Leftdriver  = 15;
 
 // ESP settings : 
 #define BAUD_RATE 9600
-
+#define BUFFER_SIZE 32  // Adjust if needed
 // I2C received flag 
 volatile boolean receive_Flag = false; 
 
@@ -26,11 +26,11 @@ volatile boolean receive_Flag = false;
 char temp[32]; 
 
 // Intersept position : 
-float x;
-float y;
+float y_left;
+float y_right;
 
 // Timer intteruption
-int timer_no_info =0;
+int timer_no_info = 0;
 int delta; 
 const int Timer_stop = 20000;
 // attach the esc 
