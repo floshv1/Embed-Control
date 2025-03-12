@@ -15,12 +15,19 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
   }
   // Update the direction of the servo motors 
   void Motor::updateDirection (float direction){
-    if(direction>=0){
-      digitalWrite(relay1,LOW);
+    try{
+      if(direction>=0){
+        digitalWrite(relay1,LOW);
+      }
+      else{
+        digitalWrite(relay1,HIGH);
+      }
     }
-    else{
-      digitalWrite(relay1,HIGH);
+    catch(float my_direction){
+      Serial.println("Direction is not good");
+      throw(direction);
     }
+
   }
   
   int Motor::getRelay() {
@@ -46,4 +53,6 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
     }
     actual_speed=esc_speed;
   }
+
+  int Motor::getSpeed(){ return this-> actual_speed;}
   
