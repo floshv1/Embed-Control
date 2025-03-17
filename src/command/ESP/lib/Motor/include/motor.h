@@ -8,7 +8,7 @@ class Motor {
     // the ESC objects
     Servo* esc;
     // the relay & driver pins 
-    int relay1;
+    int relay;
     int driver;
 
     int actual_speed;
@@ -17,21 +17,23 @@ class Motor {
     
     public : 
     // constructor 
-    Motor(int relay1, Servo* esc, int driver);
+    Motor(int relay, Servo* esc, int driver);
 
     // Update the direction of the servo motors : 
     void updateDirection(float y);
 
-    // Make the motor go to a certain speed
-    void setSpeed(byte speed);
-
+    // getters
     int getSpeed();
-
     int getRelay();
+    Servo* getEsc();
+    int getActualSpeed();
 
+    // setters
+    void setSpeed(byte speed);
+    void setRelay(int relay);
+    void setDriver(int driver);
     //TODO  : make the feedback about the speed of the motor 
     
 
-    // TODO : make the feedback about the speed of the motor 
 };
 #endif
