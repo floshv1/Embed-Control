@@ -17,13 +17,13 @@ const int Rightdriver = 4;
 const int Leftdriver  = 15;
 
 // ESP settings : 
-#define BAUD_RATE 9600
+#define BAUD_RATE 115200
 #define BUFFER_SIZE 32  // Adjust if needed
 // I2C received flag 
 volatile boolean receive_Flag = false; 
 
 // I2C received data
-char temp[32]; 
+char temp[BUFFER_SIZE];
 
 // Intersept position : 
 float y_left;
@@ -34,6 +34,5 @@ int timer_no_info = 0;
 int delta; 
 const int Timer_stop = 20000;
 // attach the esc 
-
 
 #endif 

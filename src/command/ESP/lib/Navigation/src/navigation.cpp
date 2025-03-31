@@ -16,20 +16,29 @@ Navigation::Navigation (Motor* Left_Motor, Motor* Right_Motor){
     this->lastUpdateTime = millis();
 }
 
-void Navigation::setLeftMotor(Motor* motor) {
-    this->Left_Motor = motor;
-}
-
-void Navigation::setRightMotor(Motor* motor) {
-    this->Right_Motor = motor;
-}
-
+//getters 
 float Navigation::getLeftJoystick(void) {
     return y_left_joystick;
 }
 
 float Navigation::getRightJoystick(void) {
     return y_right_joystick;
+}
+
+Motor* Navigation::getRightMotor(void){return Right_Motor;}
+
+Motor* Navigation::getLeftMotor(void){return Left_Motor;}
+
+
+
+
+// setters
+void Navigation::setLeftMotor(Motor* motor) {
+    this->Left_Motor = motor;
+}
+
+void Navigation::setRightMotor(Motor* motor) {
+    this->Right_Motor = motor;
 }
 
 
@@ -45,22 +54,10 @@ void Navigation::JoystickUnsign(float left, float right){
 }
 
 void Navigation::ComputeSpeed() {
-    // Calculate time since last update
-    unsigned long currentTime = millis();
-    float dt = (currentTime - lastUpdateTime) / 1000.0f; // Convert to seconds
-    lastUpdateTime = currentTime;
-
-    // Apply exponential smoothing
-    leftCurrentSpeed = smoothSpeed(leftCurrentSpeed, y_left_joystick, 0.3, dt);
-    rightCurrentSpeed = smoothSpeed(rightCurrentSpeed, y_right_joystick, 0.3, dt);
-
     // Set the smoothed speeds to the motors
-    Serial.print("Right speed : ");
-    Serial.println(y_right_joystick);
-    Left_Motor->setSpeed(y_left_joystick);
-    Right_Motor->setSpeed(y_right_joystick);
+    Left_Motor->controlMotor(left_speed,y_left_joystick);
+    Right_Motor->controlMotor(right_speed,y_right_joystick);
 }
-
 
 // update the direction of the 2 motors
 void Navigation::JoystickCommandDirection(){
@@ -71,8 +68,10 @@ void Navigation::JoystickCommandDirection(){
 // Make the math based on the received value 
 void Navigation::SetJoystickCommand(float left, float right){
     JoystickSign(left,right);
-    JoystickCommandDirection();
-    JoystickUnsign(left,right);
+    left_speed = (byte)(fabs(left) * 255 );
+    right_speed = (byte)(fabs(right) * 255 );
+    //JoystickCommandDirection();
+    //JoystickUnsign(left,right);
     ComputeSpeed();
 }
 
@@ -84,17 +83,17 @@ float Navigation::smoothSpeed(float currentSpeed, float targetSpeed, float alpha
 
 void Navigation::UpdateWithoutInput() {
     unsigned long currentTime = millis();
-    
+
     // If we haven't received input for a while, gradually decrease speed
     if (currentTime - lastCommandTime > TIMEOUT_MS) {
         // Calculate time delta
         float dt = (currentTime - lastUpdateTime) / 1000.0f;
         lastUpdateTime = currentTime;
-        
+
         // Gradually reduce current speeds
         leftCurrentSpeed *= DECAY_RATE;
         rightCurrentSpeed *= DECAY_RATE;
-        
+
         // Apply the reduced speeds
         Left_Motor->setSpeed(leftCurrentSpeed);
         Right_Motor->setSpeed(rightCurrentSpeed);

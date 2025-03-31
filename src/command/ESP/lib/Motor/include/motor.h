@@ -10,9 +10,7 @@ class Motor {
     // the relay & driver pins 
     int relay;
     int driver;
-
     int actual_speed;
-
     byte actual_direction;
     
     public : 
@@ -32,6 +30,9 @@ class Motor {
     void setSpeed(byte speed);
     void setRelay(int relay);
     void setDriver(int driver);
+
+
+    void controlMotor(byte targetSpeed, float newDirection);
     //TODO  : make the feedback about the speed of the motor 
     
 
