@@ -60,8 +60,11 @@ void setup(){
   Wire.onReceive(onReceive);
   Wire.begin((uint8_t)I2C_DEV_ADDR);
   Serial.begin(BAUD_RATE);
-  
-  // Initialize SErvo object 
+  esc_left->writeMicroseconds(1000); // Min throttle
+  delay(3000);
+  esc_left->writeMicroseconds(2000); // Max throttle
+  delay(2000);
+  esc_left->writeMicroseconds(1000); // Min throttle
   Serial.println("Initializing Motors...");
 
   // Check if Servo objects are initialized
@@ -98,7 +101,14 @@ void setup(){
   delay(1000);
   digitalWrite(RIGHT_RELAY, LOW);
   digitalWrite(LEFT_RELAY, LOW);  
-
+  Right_Motor->setSpeed(128);
+  delay(1000);
+  Right_Motor->setSpeed(0);
+  delay(1000);
+  Left_Motor->setSpeed(128);
+  delay(1000);
+  Left_Motor->setSpeed(0);
+  delay(1000);
 }
 
 void loop(){
@@ -106,7 +116,7 @@ void loop(){
     Serial.println("Received data");
     //TODO : write the correct pin for the ESC + setup I2C connection 
     //Serial.println(temp);
-    Navi.SetJoystickCommand(y_left,y_right);
+    Navi.ApplyJoystickCommand(y_left,y_right);
     receive_Flag = false;
     delay(200);
   }

@@ -21,20 +21,20 @@ class Motor {
     void updateDirection(float y);
 
     // getters
-    int getSpeed();
+    virtual int getSpeed();
     int getRelay();
     Servo* getEsc();
     int getActualSpeed();
 
     // setters
-    void setSpeed(byte speed);
+    virtual void setSpeed(byte speed);
     void setRelay(int relay);
     void setDriver(int driver);
 
 
-    void controlMotor(byte targetSpeed, float newDirection);
+    void MotorOperation(byte targetSpeed, float newDirection);
+    void MotorOperationESC(byte targetSpeed);
     //TODO  : make the feedback about the speed of the motor 
-    
 
 };
 #endif

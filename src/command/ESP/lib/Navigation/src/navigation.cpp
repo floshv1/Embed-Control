@@ -30,8 +30,6 @@ Motor* Navigation::getRightMotor(void){return Right_Motor;}
 Motor* Navigation::getLeftMotor(void){return Left_Motor;}
 
 
-
-
 // setters
 void Navigation::setLeftMotor(Motor* motor) {
     this->Left_Motor = motor;
@@ -53,10 +51,10 @@ void Navigation::JoystickUnsign(float left, float right){
     y_right_joystick = (float)sqrt(right*right)*255; // absolute value to have 0 255 positive
 }
 
-void Navigation::ComputeSpeed() {
+void Navigation::MotorsInstruction() {
     // Set the smoothed speeds to the motors
-    Left_Motor->controlMotor(left_speed,y_left_joystick);
-    Right_Motor->controlMotor(right_speed,y_right_joystick);
+    Left_Motor->MotorOperation(left_speed,y_left_joystick);
+    Right_Motor->MotorOperation(right_speed,y_right_joystick);
 }
 
 // update the direction of the 2 motors
@@ -66,13 +64,11 @@ void Navigation::JoystickCommandDirection(){
 }
 
 // Make the math based on the received value 
-void Navigation::SetJoystickCommand(float left, float right){
+void Navigation::ApplyJoystickCommand(float left, float right){
     JoystickSign(left,right);
     left_speed = (byte)(fabs(left) * 255 );
     right_speed = (byte)(fabs(right) * 255 );
-    //JoystickCommandDirection();
-    //JoystickUnsign(left,right);
-    ComputeSpeed();
+    MotorsInstruction();
 }
 
 float Navigation::smoothSpeed(float currentSpeed, float targetSpeed, float alpha, float dt) {

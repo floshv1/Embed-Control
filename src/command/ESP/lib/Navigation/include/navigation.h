@@ -1,7 +1,6 @@
 #include "motor.h"
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
-
 class Navigation{
 
 private:
@@ -28,7 +27,7 @@ private:
     unsigned long lastCommandTime;   // Track when we last received a command
     const unsigned long TIMEOUT_MS = 500;  // Time after which we consider connection lost
 
-    
+
 public:
     // constructor
     Navigation(Motor *Left_Motor, Motor *Right_Motor);
@@ -50,9 +49,9 @@ public:
 
     void JoystickCommandDirection();
 
-    void ComputeSpeed();
+    void MotorsInstruction();
 
-    void SetJoystickCommand(float  left, float right);
+    void ApplyJoystickCommand(float  left, float right);
     
     float smoothSpeed(float currentSpeed, float targetSpeed,float alpha, float dt=0.1);
 
