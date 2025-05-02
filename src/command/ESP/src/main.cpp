@@ -5,8 +5,8 @@ Servo* esc_right = new Servo();
 Servo* esc_left = new Servo();
 
 // creation of the 2 Motor 
-Motor* Right_Motor  = new Motor(RIGHT_RELAY, esc_right, Rightdriver);
-Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, Leftdriver);
+Motor* Right_Motor  = new Motor(RIGHT_RELAY, esc_right, 15);
+Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, 23);
 
 // creation of the navigation object 
 Navigation Navi = Navigation(Left_Motor, Right_Motor);
@@ -58,7 +58,7 @@ void onReceive(int len){
 
 void setup(){
   Wire.onReceive(onReceive);
-  Wire.begin((uint8_t)I2C_DEV_ADDR);
+  Wire.begin(21, 22); // SDA = GPIO21, SCL = GPIO22
   Serial.begin(BAUD_RATE);
   esc_left->writeMicroseconds(1000); // Min throttle
   delay(3000);
@@ -116,6 +116,8 @@ void loop(){
     Serial.println("Received data");
     //TODO : write the correct pin for the ESC + setup I2C connection 
     //Serial.println(temp);
+    Serial.printf("Joystick: L=%.1f, R=%.1f\n", y_left, y_right);
+    
     Navi.ApplyJoystickCommand(y_left,y_right);
     receive_Flag = false;
     delay(200);

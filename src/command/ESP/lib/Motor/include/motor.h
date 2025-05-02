@@ -2,6 +2,7 @@
 #define MOTOR_H
 #include <Arduino.h>
 #include <Wire.h>
+
 #include <ESP32Servo.h>
 class Motor {
     private: 
@@ -21,13 +22,13 @@ class Motor {
     void updateDirection(float y);
 
     // getters
-    virtual int getSpeed();
+    int getSpeed();
     int getRelay();
     Servo* getEsc();
     int getActualSpeed();
 
     // setters
-    virtual void setSpeed(byte speed);
+    void setSpeed(byte speed);
     void setRelay(int relay);
     void setDriver(int driver);
 

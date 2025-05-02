@@ -7,14 +7,18 @@
 // I2C address of the esp 
 #define I2C_DEV_ADDR 0x52
 
+// I2C pin assignments for ESP32
+#define I2C_SDA_PIN 21  // Default SDA pin for ESP32
+#define I2C_SCL_PIN 22  // Default SCL pin for ESP32
+
 // Pins for the relay
 #define RIGHT_RELAY 18
 #define LEFT_RELAY 5
 
 // Pins for the driver 
 
-const int Rightdriver = 4;
-const int Leftdriver  = 15;
+const int Rightdriver = 15;
+const int Leftdriver  = 23;
 
 // ESP settings : 
 #define BAUD_RATE 115200
@@ -35,4 +39,4 @@ int delta;
 const int Timer_stop = 20000;
 // attach the esc 
 
-#endif 
+#endif

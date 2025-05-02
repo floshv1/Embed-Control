@@ -8,22 +8,7 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
   this -> driver = driver;
   this -> actual_speed = 1000;
   this -> actual_direction = 0;
-  static bool timerAllocated = false;
-  if (!timerAllocated) {
-    ESP32PWM::allocateTimer(0);
-    timerAllocated = true;
-  }
-  this->esc->setPeriodHertz(50);
   this->esc->attach(driver, 1000, 2000);
-  this->esc->writeMicroseconds(1000);
-  delay(500);
-  this->esc->writeMicroseconds(2000); // Max throttle
-  delay(1000);
-  this->esc->writeMicroseconds(1000); // Min throttle
-  delay(1000);
-  this->esc->writeMicroseconds(1500); // Neutral/stop (if supported)
-  delay(500);
-  
 }
 
 // getters
@@ -79,7 +64,7 @@ void Motor::updateDirection (float direction) {
 void Motor::MotorOperation(byte targetSpeed, float newDirection) {
   // targetSpeed and newDirection are now in range -127 to 128
   int desiredDirection = (newDirection >= 0) ? 1 : -1;
-
+  Serial.printf(" ESC value : ", targetSpeed);
   if (desiredDirection != ((actual_direction >= 0) ? 1 : -1)) {
     setSpeed(0);
     delay(0.1);
