@@ -1,7 +1,6 @@
 #include "motor.h"
 
-
-  // Constructor : 
+// Constructor : 
 Motor::Motor (int relay1,Servo* esc, int driver) {
   this-> relay = relay1;
   this-> esc = esc;
@@ -9,8 +8,10 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
   this -> actual_speed = 1000;
   this -> actual_direction = 0;
   this->esc->attach(driver);
-  this->reverse->attach(relay1);
+  // Remove or comment out the next line if reverse is not used or not initialized:
+  // this->reverse->attach(relay1);
   this->esc->writeMicroseconds(1000);
+  // this->reverse->writeMicroseconds(1000);
 }
 
 // getters
@@ -21,8 +22,8 @@ int Motor::getActualSpeed(){return this->actual_speed;}
 
 // setters
 void Motor::setSpeed(byte speed) {
-  // speed is now in range -127 to 128
-  int esc_speed = map(speed, -127, 128, 1000, 2000);
+  // speed is now in range 0 to 255
+  int esc_speed = map(speed, 0, 255, 1000, 2000);
   //esc->writeMicroseconds(esc_speed);
   updateDirection(esc_speed);
   if (esc_speed > actual_speed) {
@@ -43,16 +44,17 @@ void Motor::setSpeed(byte speed) {
 void Motor::setRelay(int relay){ this->relay = relay;}
 void Motor::setDriver(int driver){ this->driver = driver;}
 
-
 // Update the direction of the servo motors 
 void Motor::updateDirection (float direction) {
-  // direction is now in range -127 to 128
+  // direction is now in range 0 to 255
   try {
     if (direction >= 0) {
-      digitalWrite(relay, LOW);
+      //digitalWrite(relay, LOW);
+      this->esc->writeMicroseconds(1000);
     }
     else {
-      digitalWrite(relay, HIGH);
+      this->esc->writeMicroseconds(2000);
+      //digitalWrite(relay, HIGH);
     }
     actual_direction = direction;
   }
@@ -62,12 +64,11 @@ void Motor::updateDirection (float direction) {
   }
 }
 
-
 void Motor::MotorOperation(byte targetSpeed, float newDirection) {
-  // targetSpeed and newDirection are now in range -127 to 128
-  int desiredDirection = (newDirection >= 0) ? 1 : -1;
+  // targetSpeed and newDirection are now in range 0 to 255
+  int desiredDirection = (newDirection >= 128) ? 1 : 0;
   Serial.printf(" ESC value : ", targetSpeed);
-  if (desiredDirection != ((actual_direction >= 0) ? 1 : -1)) {
+  if (desiredDirection != ((actual_direction >= 128) ? 1 : 0)) {
     setSpeed(0);
     delay(0.1);
     updateDirection(newDirection);

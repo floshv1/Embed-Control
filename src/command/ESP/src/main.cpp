@@ -1,16 +1,19 @@
 #include "main.h"
+#include <ESP32Servo.h>
 
-// Servo object to control the ESC
+const int escPin = 23; // Change this to the actual pin your ESC signal wire is connected to
+Servo esc;
+
+// Servo object to control the this ESC
 Servo* esc_right = new Servo();
 Servo* esc_left = new Servo();
 
 // creation of the 2 Motor 
-Motor* Right_Motor  = new Motor(RIGHT_RELAY, esc_right, 15);
-Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, 23);
+Motor* Right_Motor  = new Motor(RIGHT_RELAY, esc_right, Rightdriver);
+Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, Leftdriver);
 
 // creation of the navigation object 
 Navigation Navi = Navigation(Left_Motor, Right_Motor);
-
 
 //Function for reading the received data
 void onReceive(int len){
@@ -58,7 +61,7 @@ void onReceive(int len){
 
 void setup(){
   Wire.onReceive(onReceive);
-  Wire.begin(21, 22); // SDA = GPIO21, SCL = GPIO22
+  Wire.begin(); // SDA = GPIO21, SCL = GPIO22
   Serial.begin(BAUD_RATE);
   Serial.println("Initializing Motors...");
 
@@ -73,28 +76,31 @@ void setup(){
     Serial.println("Error: Failed to initialize Motor objects");
     while (true); // Halt execution
   }
-  Right_Motor->setSpeed(128);
-  delay(1000);
-  Right_Motor->setSpeed(0);
-  delay(1000);
-  Left_Motor->setSpeed(128);
-  delay(1000);
-  Left_Motor->setSpeed(0);
-  delay(1000);
+
+  esc.attach(escPin);
+  esc.writeMicroseconds(1000); // Min throttle
+  Serial.println("Arming ESC...");
+  delay(5000); // Wait for arming
 }
 
 void loop(){
   if(receive_Flag){
     Serial.println("Received data");
-    //TODO : write the correct pin for the ESC + setup I2C connection 
-    //Serial.println(temp);
     Navi.ApplyJoystickCommand(y_left,y_right);
     receive_Flag = false;
-    delay(200);
+    delay(200); 
   }
   else{
     Serial.println("No data received");
     Navi.UpdateWithoutInput();
     delay(300);
   }
+
+  // Ramp up throttle
+  for (int pw = 1000; pw <= 2000; pw += 50) {
+    esc.writeMicroseconds(pw);
+    Serial.println(pw);
+    delay(500);
+  }
+  while (1); // Stop
 }

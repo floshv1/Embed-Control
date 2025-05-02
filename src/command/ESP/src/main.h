@@ -3,7 +3,6 @@
 #define MAIN_H
 #include "navigation.h"
 
-
 // I2C address of the esp 
 #define I2C_DEV_ADDR 0x52
 
@@ -16,7 +15,6 @@
 #define LEFT_RELAY 33
 
 // Pins for the driver 
-
 const int Rightdriver = 18;
 const int Leftdriver  = 32;
 
