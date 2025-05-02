@@ -8,7 +8,9 @@ Motor::Motor (int relay1,Servo* esc, int driver) {
   this -> driver = driver;
   this -> actual_speed = 1000;
   this -> actual_direction = 0;
-  this->esc->attach(driver, 1000, 2000);
+  this->esc->attach(driver);
+  this->reverse->attach(relay1);
+  this->esc->writeMicroseconds(1000);
 }
 
 // getters

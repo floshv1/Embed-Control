@@ -60,47 +60,19 @@ void setup(){
   Wire.onReceive(onReceive);
   Wire.begin(21, 22); // SDA = GPIO21, SCL = GPIO22
   Serial.begin(BAUD_RATE);
-  esc_left->writeMicroseconds(1000); // Min throttle
-  delay(3000);
-  esc_left->writeMicroseconds(2000); // Max throttle
-  delay(2000);
-  esc_left->writeMicroseconds(1000); // Min throttle
   Serial.println("Initializing Motors...");
 
-  // Check if Servo objects are initialized
   if (esc_right == nullptr || esc_left == nullptr) {
     Serial.println("Error: Failed to initialize Servo objects");
     while (true); // Halt execution
   }
-
   Serial.println("Creating Motor objects...");
-  
-  pinMode(RIGHT_RELAY, OUTPUT);
-  pinMode(LEFT_RELAY, OUTPUT);
-
-  // Initialize relays
-  digitalWrite(RIGHT_RELAY, LOW);
-  digitalWrite(LEFT_RELAY, LOW);
 
   // Check if Motor objects are initialized
   if (Right_Motor == nullptr || Left_Motor == nullptr) {
     Serial.println("Error: Failed to initialize Motor objects");
     while (true); // Halt execution
   }
-  digitalWrite(RIGHT_RELAY, HIGH);
-  delay(1000);
-  digitalWrite(RIGHT_RELAY, LOW);
-  delay(1000);
-  digitalWrite(LEFT_RELAY, HIGH);
-  delay(1000);
-  digitalWrite(LEFT_RELAY, LOW);
-
-  delay(1000);
-  digitalWrite(RIGHT_RELAY, HIGH);
-  digitalWrite(LEFT_RELAY, HIGH);
-  delay(1000);
-  digitalWrite(RIGHT_RELAY, LOW);
-  digitalWrite(LEFT_RELAY, LOW);  
   Right_Motor->setSpeed(128);
   delay(1000);
   Right_Motor->setSpeed(0);
@@ -116,8 +88,6 @@ void loop(){
     Serial.println("Received data");
     //TODO : write the correct pin for the ESC + setup I2C connection 
     //Serial.println(temp);
-    Serial.printf("Joystick: L=%.1f, R=%.1f\n", y_left, y_right);
-    
     Navi.ApplyJoystickCommand(y_left,y_right);
     receive_Flag = false;
     delay(200);

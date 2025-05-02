@@ -8,6 +8,7 @@ class Motor {
     private: 
     // the ESC objects
     Servo* esc;
+    Servo* reverse;
     // the relay & driver pins 
     int relay;
     int driver;

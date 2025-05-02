@@ -12,13 +12,13 @@
 #define I2C_SCL_PIN 22  // Default SCL pin for ESP32
 
 // Pins for the relay
-#define RIGHT_RELAY 18
-#define LEFT_RELAY 5
+#define RIGHT_RELAY 19
+#define LEFT_RELAY 33
 
 // Pins for the driver 
 
-const int Rightdriver = 15;
-const int Leftdriver  = 23;
+const int Rightdriver = 18;
+const int Leftdriver  = 32;
 
 // ESP settings : 
 #define BAUD_RATE 115200
