@@ -30,7 +30,6 @@ Motor* Navigation::getRightMotor(void){return Right_Motor;}
 Motor* Navigation::getLeftMotor(void){return Left_Motor;}
 
 
-// setters
 void Navigation::setLeftMotor(Motor* motor) {
     this->Left_Motor = motor;
 }

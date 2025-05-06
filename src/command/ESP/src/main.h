@@ -6,10 +6,6 @@
 // I2C address of the esp 
 #define I2C_DEV_ADDR 0x52
 
-// I2C pin assignments for ESP32
-#define I2C_SDA_PIN 21  // Default SDA pin for ESP32
-#define I2C_SCL_PIN 22  // Default SCL pin for ESP32
-
 // Pins for the relay
 #define RIGHT_RELAY 19
 #define LEFT_RELAY 33

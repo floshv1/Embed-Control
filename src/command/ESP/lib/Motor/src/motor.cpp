@@ -1,81 +1,70 @@
 #include "motor.h"
 
 // Constructor : 
-Motor::Motor (int relay1,Servo* esc, int driver) {
-  this-> relay = relay1;
-  this-> esc = esc;
-  this -> driver = driver;
-  this -> actual_speed = 1000;
-  this -> actual_direction = 0;
+Motor::Motor(int relay1, Servo* esc, int driver, Servo* reverse) {
+  this->relay = relay1;
+  this->esc = esc;
+  this->reverse = reverse;
+  this->driver = driver;
+  this->actual_speed = 1000;
+  this->actual_direction = 0;
+  this->reverse->attach(relay1);
+  this->reverse->writeMicroseconds(1000);
   this->esc->attach(driver);
-  // Remove or comment out the next line if reverse is not used or not initialized:
-  // this->reverse->attach(relay1);
   this->esc->writeMicroseconds(1000);
-  // this->reverse->writeMicroseconds(1000);
+  delay(1000);
 }
 
 // getters
-int Motor::getSpeed(){return this-> actual_speed;} 
-int Motor::getRelay(){return this -> relay;}
-Servo* Motor::getEsc(){return esc;}
-int Motor::getActualSpeed(){return this->actual_speed;}
+int Motor::getSpeed() { return this->actual_speed; }
+int Motor::getRelay() { return this->relay; }
+Servo* Motor::getEsc() { return esc; }
+Servo* Motor::getReverse() { return reverse; }
+int Motor::getActualSpeed() { return this->actual_speed; }
 
 // setters
 void Motor::setSpeed(byte speed) {
-  // speed is now in range 0 to 255
   int esc_speed = map(speed, 0, 255, 1000, 2000);
-  //esc->writeMicroseconds(esc_speed);
-  updateDirection(esc_speed);
+// Only ramp if the difference is significant
   if (esc_speed > actual_speed) {
-    for (int i = actual_speed; i < esc_speed; i += 2) {
+    for (int i = actual_speed; i <= esc_speed; i += 2) {
       esc->writeMicroseconds(i);
-      delay(0.1);
+      delay(0.1); 
     }
-  }
-  else {
-    for (int i = actual_speed; i > esc_speed; i -= 2) {
+  } else {
+    for (int i = actual_speed; i >= esc_speed; i -= 2) {
       esc->writeMicroseconds(i);
-      delay(0.1);
+      delay(0.1); 
     }
   }
   actual_speed = esc_speed;
 }
 
-void Motor::setRelay(int relay){ this->relay = relay;}
-void Motor::setDriver(int driver){ this->driver = driver;}
+void Motor::setRelay(int relay) { this->relay = relay; }
+void Motor::setDriver(int driver) { this->driver = driver; }
+void Motor::setReverse(Servo* reverse) { this->reverse = reverse; }
 
-// Update the direction of the servo motors 
-void Motor::updateDirection (float direction) {
-  // direction is now in range 0 to 255
-  try {
-    if (direction >= 0) {
-      //digitalWrite(relay, LOW);
-      this->esc->writeMicroseconds(1000);
-    }
-    else {
-      this->esc->writeMicroseconds(2000);
-      //digitalWrite(relay, HIGH);
-    }
-    actual_direction = direction;
+void Motor::updateDirection(int direction) {  
+  if (direction > 0) {
+    reverse->writeMicroseconds(1000);
+    Serial.println("→ Reverse pin set to FORWARD");
+  } else {
+    reverse->writeMicroseconds(2000);
+    Serial.println("← Reverse pin set to REVERSE");
   }
-  catch (int8_t my_direction) {
-    Serial.println("Direction is not good");
-    throw(direction);
-  }
+  delay(100);
+  actual_direction = direction;
 }
 
 void Motor::MotorOperation(byte targetSpeed, float newDirection) {
-  // targetSpeed and newDirection are now in range 0 to 255
-  int desiredDirection = (newDirection >= 128) ? 1 : 0;
-  Serial.printf(" ESC value : ", targetSpeed);
-  if (desiredDirection != ((actual_direction >= 128) ? 1 : 0)) {
-    setSpeed(0);
-    delay(0.1);
-    updateDirection(newDirection);
-  }
-  setSpeed(targetSpeed);
-}
+  int desired = (newDirection >= 0) ? 1 : -1;
+  int current = (actual_direction >= 0) ? 1 : -1;
 
-void Motor::MotorOperationESC(byte targetSpeed){
+  if (desired != current) {
+    Serial.println("↔ Direction change needed");
+    setSpeed(0);
+    Serial.println("⚠ Throttle set to 0");
+    updateDirection(desired);
+  }
   setSpeed(targetSpeed);
 }

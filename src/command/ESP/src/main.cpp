@@ -1,16 +1,19 @@
 #include "main.h"
 #include <ESP32Servo.h>
 
-const int escPin = 23; // Change this to the actual pin your ESC signal wire is connected to
-Servo esc;
 
 // Servo object to control the this ESC
 Servo* esc_right = new Servo();
 Servo* esc_left = new Servo();
 
+Servo* esc = new Servo();
+Servo* reverse = new Servo();
+
+Servo* reverse_right = new Servo();
+Servo* reverse_left = new Servo();
 // creation of the 2 Motor 
-Motor* Right_Motor  = new Motor(RIGHT_RELAY, esc_right, Rightdriver);
-Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, Leftdriver);
+Motor* Right_Motor  = new Motor(15, esc_right, 23,reverse_right);
+Motor* Left_Motor = new Motor(LEFT_RELAY, esc_left, Leftdriver,reverse_left);
 
 // creation of the navigation object 
 Navigation Navi = Navigation(Left_Motor, Right_Motor);
@@ -26,7 +29,7 @@ void onReceive(int len){
   for (int j = 0; j < len; j++) {
     temp[j] = temp[j + 1];
   }
-  Serial.print("Raw received [");
+  Serial.print("Raw received ["); 
   for(int i = 0; i < len; i++) {
       Serial.print((char)temp[i]);
       Serial.print(" (");
@@ -41,7 +44,7 @@ void onReceive(int len){
     return;
   }
   char* end = strchr(temp,')');
-  *end = '\0';
+    *end = '\0';
   memmove(temp, temp + 1, strlen(temp));
   char* separator = strchr(temp,',');
   if(separator!=0){
@@ -61,7 +64,7 @@ void onReceive(int len){
 
 void setup(){
   Wire.onReceive(onReceive);
-  Wire.begin(); // SDA = GPIO21, SCL = GPIO22
+  Wire.begin(21,22,I2C_DEV_ADDR); // Use default SDA=21, SCL=22
   Serial.begin(BAUD_RATE);
   Serial.println("Initializing Motors...");
 
@@ -77,13 +80,50 @@ void setup(){
     while (true); // Halt execution
   }
 
-  esc.attach(escPin);
-  esc.writeMicroseconds(1000); // Min throttle
+  //esc.attach(escPin);
+  //esc.writeMicroseconds(1000); // Min throttle
   Serial.println("Arming ESC...");
-  delay(5000); // Wait for arming
+  delay(5000); 
 }
 
 void loop(){
+  static String inputString = "";
+  static bool inputComplete = false;
+  delay(20);  // cadence stable (~50Hz)
+  while (Serial.available()) {
+    char inChar = (char)Serial.read();
+    if (inChar == '\n' || inChar == '\r') {
+      inputComplete = true;
+      break;
+    } else {
+      inputString += inChar;
+    }
+  }
+
+  if (inputComplete && inputString.length() > 0) {
+    float value = inputString.toFloat(); // Accepts values like -1.0 to 1.0
+    value = constrain(value, -1.0, 1.0);
+
+    // Map value to speed and direction
+    byte speed = (byte)(fabs(value) * 255);
+    float direction = value;
+
+    Serial.print("Received value: ");
+    Serial.print(value);
+    Serial.print(" | Speed: ");
+    Serial.print(speed);
+    Serial.print(" | Direction: ");
+    Serial.println(direction);
+
+    // Example: control right motor
+    Navi.ApplyJoystickCommand(value, value);
+
+    inputString = "";
+    inputComplete = false;
+  }
+  // ...optional: add a small delay to avoid flooding
+  delay(10);
+  /*
   if(receive_Flag){
     Serial.println("Received data");
     Navi.ApplyJoystickCommand(y_left,y_right);
@@ -94,13 +134,5 @@ void loop(){
     Serial.println("No data received");
     Navi.UpdateWithoutInput();
     delay(300);
-  }
-
-  // Ramp up throttle
-  for (int pw = 1000; pw <= 2000; pw += 50) {
-    esc.writeMicroseconds(pw);
-    Serial.println(pw);
-    delay(500);
-  }
-  while (1); // Stop
+  }*/
 }
